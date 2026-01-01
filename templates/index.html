@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Credit Default Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Credit Default Prediction</h1>
+    <p>Enter customer financial details to assess default risk</p>
+
+    <input id="LIMIT_BAL" placeholder="Credit Limit">
+    <input id="AGE" placeholder="Age">
+    <input id="PAY_0" placeholder="PAY_0">
+    <input id="PAY_2" placeholder="PAY_2">
+    <input id="PAY_3" placeholder="PAY_3">
+    <input id="PAY_4" placeholder="PAY_4">
+    <input id="PAY_5" placeholder="PAY_5">
+    <input id="PAY_6" placeholder="PAY_6">
+    <input id="BILL_AMT1" placeholder="Bill Amount">
+    <input id="PAY_AMT1" placeholder="Payment Amount">
+
+    <button onclick="predict()">Predict Default Risk</button>
+
+    <div id="result" class="result" style="display:none;"></div>
+
+</div>
+
+<script>
+async function predict() {
+    const payload = {
+        LIMIT_BAL: Number(document.getElementById("LIMIT_BAL").value),
+        AGE: Number(document.getElementById("AGE").value),
+        PAY_0: Number(document.getElementById("PAY_0").value),
+        PAY_2: Number(document.getElementById("PAY_2").value),
+        PAY_3: Number(document.getElementById("PAY_3").value),
+        PAY_4: Number(document.getElementById("PAY_4").value),
+        PAY_5: Number(document.getElementById("PAY_5").value),
+        PAY_6: Number(document.getElementById("PAY_6").value),
+        BILL_AMT1: Number(document.getElementById("BILL_AMT1").value),
+        PAY_AMT1: Number(document.getElementById("PAY_AMT1").value),
+        SEX_1: 1,
+        EDUCATION_2: 1,
+        MARRIAGE_1: 1
+    };
+
+    const res = await fetch("/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    const box = document.getElementById("result");
+    box.style.display = "block";
+    box.innerHTML =
+        "Default Probability: <b>" + data.default_probability.toFixed(2) +
+        "</b><br>Prediction: <b>" +
+        (data.default_prediction === 1 ? "HIGH RISK" : "LOW RISK") + "</b>";
+}
+</script>
+
+</body>
+</html>
